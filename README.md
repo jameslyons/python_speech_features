@@ -3,6 +3,8 @@ python_speech_features
 
 This library provides common speech features for ASR including MFCCs and filterbank energies.
 
+You will need numpy and scipy to run these files.
+
 To use MFCC features,
 
 ```python
