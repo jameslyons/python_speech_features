@@ -19,6 +19,8 @@ mfcc_feat = mfcc(sig,rate)
 fbank_feat = fbank(sig,rate)
 ```
 
+From here you can write the features to a file etc.
+
 MFCC Features
 ---------------------------
 
