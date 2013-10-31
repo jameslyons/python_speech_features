@@ -5,6 +5,14 @@ import numpy
 import math
 
 def framesig(sig,frame_len,frame_step,winfunc=lambda x:numpy.ones((1,x))):
+    """Frame a signal into overlapping frames.
+
+    :param sig: the audio signal to frame.
+    :param frame_len: length of each frame measured in samples.
+    :param frame_step: number of samples after the start of the previous frame that the next frame should begin.
+    :param winfunc: the analysis window to apply to each frame. By default no window is applied.    
+    :returns: an array of frames. Size is NUMFRAMES by frame_len.
+    """
     slen = len(sig)
     frame_len = round(frame_len)
     frame_step = round(frame_step)

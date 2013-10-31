@@ -1,7 +1,7 @@
 python_speech_features
 ======================
 
-This library provides common speech features for ASR including MFCCs and log filterbank energies.
+This library provides common speech features for ASR including MFCCs and filterbank energies.
 
 To use MFCC features,
 
@@ -52,7 +52,7 @@ following parameters are supported:
 
 ```python
 def fbank(signal,samplerate=16000,winlen=0.025,winstep=0.01,
-          nfilt=26,nfft=512,lowfreq=0,highfreq=None,preemph=0.97):
+          nfilt=26,nfft=512,lowfreq=0,highfreq=None,preemph=0.97)
 ```
 
 | Parameter | Description |
