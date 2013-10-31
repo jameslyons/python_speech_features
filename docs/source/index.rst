@@ -9,7 +9,6 @@ Welcome to python_speech_features's documentation!
 This library provides common speech features for ASR including MFCCs and filterbank energies.
 If you are not sure what MFCCs are, and would like to know more have a look at this MFCC tutorial: http://www.practicalcryptography.com/miscellaneous/machine-learning/guide-mel-frequency-cepstral-coefficients-mfccs/.
 
-
 You will need numpy and scipy to run these files.
 
 To use MFCC features,::
