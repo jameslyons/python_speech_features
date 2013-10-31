@@ -1,0 +1,3 @@
+python_speech_features
+numpy>=1.6.0b1
+scipy>=0.9.0
