@@ -27,16 +27,8 @@ def mfcc(signal,samplerate=16000,winlen=0.025,winstep=0.01,numcep=13,
           ceplifter=22,appendEnergy=True)
 ```
 
-Colons can be used to align columns.
-
-| Tables        | Are           | Cool  |
-| ------------- |:-------------:| -----:|
-| col 3 is      | right-aligned | $1600 |
-| col 2 is      | centered      |   $12 |
-| zebra stripes | are neat      |    $1 |
-
-
 | Parameter | Description |
+| ------------- |-------------| -----|
 | signal | the audio signal from which to compute features. Should be an N*1 array |
 | samplerate | the samplerate of the signal we are working with. |
 | winlen | the length of the analysis window in seconds. Default is 0.025s (25 milliseconds)     |
