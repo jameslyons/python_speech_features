@@ -43,7 +43,7 @@ def fbank(signal,samplerate=16000,winlen=0.025,winstep=0.01,
     :param highfreq: highest band edge of mel filters. In Hz, default is samplerate/2
     :param preemph: apply preemphasis filter with preemph as coefficient. 0 is no filter. Default is 0.97. 
     :returns: 2 values. The first is a numpy array of size (NUMFRAMES by nfilt) containing features. Each row holds 1 feature vector. The
-        second return value is the enrgy in each frame (total energy, unwindowed)
+        second return value is the energy in each frame (total energy, unwindowed)
     """          
     highfreq= highfreq or samplerate/2
     signal = sigproc.preemphasis(signal,preemph)
@@ -86,8 +86,7 @@ def ssc(signal,samplerate=16000,winlen=0.025,winstep=0.01,
     :param lowfreq: lowest band edge of mel filters. In Hz, default is 0.
     :param highfreq: highest band edge of mel filters. In Hz, default is samplerate/2
     :param preemph: apply preemphasis filter with preemph as coefficient. 0 is no filter. Default is 0.97. 
-    :returns: A numpy array of size (NUMFRAMES by nfilt) containing features. Each row holds 1 feature vector. The
-        second return value is the enrgy in each frame (total energy, unwindowed)
+    :returns: A numpy array of size (NUMFRAMES by nfilt) containing features. Each row holds 1 feature vector. 
     """          
     highfreq= highfreq or samplerate/2
     signal = sigproc.preemphasis(signal,preemph)
