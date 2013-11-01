@@ -32,7 +32,7 @@ To use MFCC features,::
 From here you can write the features to a file etc.
 
 Functions provided in features module
----------------------------------
+-------------------------------------
    
 .. automodule:: features
     :members:
