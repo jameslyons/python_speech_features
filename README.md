@@ -2,17 +2,24 @@ python_speech_features
 ======================
 
 This library provides common speech features for ASR including MFCCs and filterbank energies.
-If you are not sure what MFCCs are, and would like to know more have a look at this [MFCC tutorial](http://www.practicalcryptography.com/miscellaneous/machine-learning/guide-mel-frequency-cepstral-coefficients-mfccs/).
+If you are not sure what MFCCs are, and would like to know more have a look at this 
+[MFCC tutorial](http://www.practicalcryptography.com/miscellaneous/machine-learning/guide-mel-frequency-cepstral-coefficients-mfccs/).
 
 Documentation for this project can be found here: http://python-speech-features.readthedocs.org/en/latest/
+
+Supported features:
+
+- Mel Frequency Cepstral Coefficients
+- Filterbank Energies
+- Log Filterbank Energies
 
 You will need numpy and scipy to run these files.
 
 To use MFCC features,
 
 ```python
-from mfcc import mfcc
-from mfcc import fbank
+from features import mfcc
+from features import fbank
 import scipy.io.wavfile as wav
 
 (rate,sig) = wav.read("/file.wav")
@@ -58,7 +65,7 @@ The default parameters should work fairly well for most cases, if you want to ch
 following parameters are supported:
 
 ```python
-def fbank(signal,samplerate=16000,winlen=0.025,winstep=0.01,
+def logfbank(signal,samplerate=16000,winlen=0.025,winstep=0.01,
           nfilt=26,nfft=512,lowfreq=0,highfreq=None,preemph=0.97)
 ```
 

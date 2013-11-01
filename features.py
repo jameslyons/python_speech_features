@@ -3,6 +3,31 @@
 import numpy
 import sigproc
 from scipy.fftpack import dct
+    
+def mfcc(signal,samplerate=16000,winlen=0.025,winstep=0.01,numcep=13,
+          nfilt=26,nfft=512,lowfreq=0,highfreq=None,preemph=0.97,ceplifter=22,appendEnergy=True):
+    """Compute MFCC features from an audio signal.
+
+    :param signal: the audio signal from which to compute features. Should be an N*1 array
+    :param samplerate: the samplerate of the signal we are working with.
+    :param winlen: the length of the analysis window in seconds. Default is 0.025s (25 milliseconds)    
+    :param winstep: the step between successive windows in seconds. Default is 0.01s (10 milliseconds)    
+    :param numcep: the number of cepstrum to return, default 13    
+    :param nfilt: the number of filters in the filterbank, default 20.
+    :param nfft: the FFT size. Default is 512.
+    :param lowfreq: lowest band edge of mel filters. In Hz, default is 0.
+    :param highfreq: highest band edge of mel filters. In Hz, default is samplerate/2
+    :param preemph: apply preemphasis filter with preemph as coefficient. 0 is no filter. Default is 0.97. 
+    :param ceplifter: apply a lifter to final cepstral coefficients. 0 is no lifter. Default is 22. 
+    :param appendEnergy: if this is true, the zeroth cepstral coefficient is replaced with the log of the total frame energy.
+    :returns: A numpy array of size (NUMFRAMES by numcep) containing features. Each row holds 1 feature vector.
+    """            
+    feat,energy = fbank(signal,samplerate,winlen,winstep,nfilt,nfft,lowfreq,highfreq,preemph)
+    feat = numpy.log(feat)
+    feat = dct(feat, type=2, axis=1, norm='ortho')[:,:numcep]
+    feat = lifter(feat,ceplifter)
+    if appendEnergy: feat[:,0] = numpy.log(energy) # replace first cepstral coefficient with log of frame energy
+    return feat
 
 def fbank(signal,samplerate=16000,winlen=0.025,winstep=0.01,
           nfilt=26,nfft=512,lowfreq=0,highfreq=None,preemph=0.97):
@@ -30,30 +55,24 @@ def fbank(signal,samplerate=16000,winlen=0.025,winstep=0.01,
     feat = numpy.dot(pspec,fb.T) # compute the filterbank energies
     return feat,energy
 
-def mfcc(signal,samplerate=16000,winlen=0.025,winstep=0.01,numcep=13,
-          nfilt=26,nfft=512,lowfreq=0,highfreq=None,preemph=0.97,ceplifter=22,appendEnergy=True):
-    """Compute MFCC features from an audio signal.
+def logfbank(signal,samplerate=16000,winlen=0.025,winstep=0.01,
+          nfilt=26,nfft=512,lowfreq=0,highfreq=None,preemph=0.97):
+    """Compute log Mel-filterbank energy features from an audio signal.
 
     :param signal: the audio signal from which to compute features. Should be an N*1 array
     :param samplerate: the samplerate of the signal we are working with.
     :param winlen: the length of the analysis window in seconds. Default is 0.025s (25 milliseconds)    
-    :param winstep: the step between successive windows in seconds. Default is 0.01s (10 milliseconds)    
-    :param numcep: the number of cepstrum to return, default 13    
+    :param winstep: the step between seccessive windows in seconds. Default is 0.01s (10 milliseconds)    
     :param nfilt: the number of filters in the filterbank, default 20.
     :param nfft: the FFT size. Default is 512.
     :param lowfreq: lowest band edge of mel filters. In Hz, default is 0.
     :param highfreq: highest band edge of mel filters. In Hz, default is samplerate/2
     :param preemph: apply preemphasis filter with preemph as coefficient. 0 is no filter. Default is 0.97. 
-    :param ceplifter: apply a lifter to final cepstral coefficients. 0 is no lifter. Default is 22. 
-    :param appendEnergy: if this is true, the zeroth cepstral coefficient is replaced with the log of the total frame energy.
-    :returns: A numpy array of size (NUMFRAMES by numcep) containing features. Each row holds 1 feature vector.
-    """            
+    :returns: A numpy array of size (NUMFRAMES by nfilt) containing features. Each row holds 1 feature vector. The
+        second return value is the enrgy in each frame (total energy, unwindowed)
+    """          
     feat,energy = fbank(signal,samplerate,winlen,winstep,nfilt,nfft,lowfreq,highfreq,preemph)
-    feat = numpy.log(feat)
-    feat = dct(feat, type=2, axis=1, norm='ortho')[:,:numcep]
-    feat = lifter(feat,ceplifter)
-    if appendEnergy: feat[:,0] = numpy.log(energy) # replace first cepstral coefficient with log of frame energy
-    return feat
+    return numpy.log(feat)
     
 def hz2mel(hz):
     """Convert a value in Hertz to Mels
