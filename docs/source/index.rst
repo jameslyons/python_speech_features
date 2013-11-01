@@ -17,6 +17,7 @@ Supported features:
 - :py:meth:`features.mfcc` - Mel Frequency Cepstral Coefficients
 - :py:meth:`features.fbank` - Filterbank Energies
 - :py:meth:`features.logfbank` - Log Filterbank Energies
+- :py:meth:`features.ssc` - Spectral Subband Centroids
 
 To use MFCC features,::
 

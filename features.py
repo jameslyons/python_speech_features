@@ -42,7 +42,7 @@ def fbank(signal,samplerate=16000,winlen=0.025,winstep=0.01,
     :param lowfreq: lowest band edge of mel filters. In Hz, default is 0.
     :param highfreq: highest band edge of mel filters. In Hz, default is samplerate/2
     :param preemph: apply preemphasis filter with preemph as coefficient. 0 is no filter. Default is 0.97. 
-    :returns: A numpy array of size (NUMFRAMES by nfilt) containing features. Each row holds 1 feature vector. The
+    :returns: 2 values. The first is a numpy array of size (NUMFRAMES by nfilt) containing features. Each row holds 1 feature vector. The
         second return value is the enrgy in each frame (total energy, unwindowed)
     """          
     highfreq= highfreq or samplerate/2
@@ -68,11 +68,37 @@ def logfbank(signal,samplerate=16000,winlen=0.025,winstep=0.01,
     :param lowfreq: lowest band edge of mel filters. In Hz, default is 0.
     :param highfreq: highest band edge of mel filters. In Hz, default is samplerate/2
     :param preemph: apply preemphasis filter with preemph as coefficient. 0 is no filter. Default is 0.97. 
-    :returns: A numpy array of size (NUMFRAMES by nfilt) containing features. Each row holds 1 feature vector. The
-        second return value is the enrgy in each frame (total energy, unwindowed)
+    :returns: A numpy array of size (NUMFRAMES by nfilt) containing features. Each row holds 1 feature vector. 
     """          
     feat,energy = fbank(signal,samplerate,winlen,winstep,nfilt,nfft,lowfreq,highfreq,preemph)
     return numpy.log(feat)
+
+def ssc(signal,samplerate=16000,winlen=0.025,winstep=0.01,
+          nfilt=26,nfft=512,lowfreq=0,highfreq=None,preemph=0.97):
+    """Compute Spectral Subband Centroid features from an audio signal.
+
+    :param signal: the audio signal from which to compute features. Should be an N*1 array
+    :param samplerate: the samplerate of the signal we are working with.
+    :param winlen: the length of the analysis window in seconds. Default is 0.025s (25 milliseconds)    
+    :param winstep: the step between seccessive windows in seconds. Default is 0.01s (10 milliseconds)    
+    :param nfilt: the number of filters in the filterbank, default 20.
+    :param nfft: the FFT size. Default is 512.
+    :param lowfreq: lowest band edge of mel filters. In Hz, default is 0.
+    :param highfreq: highest band edge of mel filters. In Hz, default is samplerate/2
+    :param preemph: apply preemphasis filter with preemph as coefficient. 0 is no filter. Default is 0.97. 
+    :returns: A numpy array of size (NUMFRAMES by nfilt) containing features. Each row holds 1 feature vector. The
+        second return value is the enrgy in each frame (total energy, unwindowed)
+    """          
+    highfreq= highfreq or samplerate/2
+    signal = sigproc.preemphasis(signal,preemph)
+    frames = sigproc.framesig(signal, winlen*samplerate, winstep*samplerate)
+    pspec = sigproc.powspec(frames,nfft)
+    
+    fb = get_filterbanks(nfilt,nfft,samplerate)
+    feat = numpy.dot(pspec,fb.T) # compute the filterbank energies
+    R = numpy.tile(numpy.linspace(1,samplerate/2,numpy.size(pspec,1)),(numpy.size(pspec,0),1))
+    
+    return numpy.dot(pspec*R,fb.T) / feat
     
 def hz2mel(hz):
     """Convert a value in Hertz to Mels
