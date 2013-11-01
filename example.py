@@ -1,9 +1,9 @@
-from mfcc import mfcc
-from mfcc import fbank
+from features import mfcc
+from features import logfbank
 import scipy.io.wavfile as wav
 
 (rate,sig) = wav.read("file.wav")
 mfcc_feat = mfcc(sig,rate)
-fbank_feat = fbank(sig,rate)
+fbank_feat = logfbank(sig,rate)
 
-print mfcc_feat[1:3,:]
+print fbank_feat[1:3,:]
