@@ -20,15 +20,19 @@ To use MFCC features,
 
 ```python
 from features import mfcc
-from features import fbank
+from features import logfbank
 import scipy.io.wavfile as wav
 
-(rate,sig) = wav.read("/file.wav")
+(rate,sig) = wav.read("file.wav")
 mfcc_feat = mfcc(sig,rate)
-fbank_feat = fbank(sig,rate)
+fbank_feat = logfbank(sig,rate)
+
+print fbank_feat[1:3,:]
 ```
 
 From here you can write the features to a file etc.
+
+---
 
 MFCC Features
 ---------------------------
@@ -57,6 +61,8 @@ def mfcc(signal,samplerate=16000,winlen=0.025,winstep=0.01,numcep=13,
 | ceplifter | apply a lifter to final cepstral coefficients. 0 is no lifter. Default is 22.  |
 | appendEnergy | if this is true, the zeroth cepstral coefficient is replaced with the log of the total frame energy. |
 | returns | A numpy array of size (NUMFRAMES by numcep) containing features. Each row holds 1 feature vector. |
+
+---
 
 Filterbank Features
 ---------------------------
