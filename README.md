@@ -17,6 +17,8 @@ You will need numpy and scipy to run these files.
 
 To use MFCC features,
 
+[3](preview:example.py)
+
 ```python
 from features import mfcc
 from features import fbank
