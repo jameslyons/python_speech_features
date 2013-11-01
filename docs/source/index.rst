@@ -19,7 +19,7 @@ Supported features:
 - :py:meth:`features.logfbank` - Log Filterbank Energies
 - :py:meth:`features.ssc` - Spectral Subband Centroids
 
-To use MFCC features,::
+To use MFCC features::
 
     from features import mfcc
     from features import logfbank
