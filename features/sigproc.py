@@ -14,14 +14,14 @@ def framesig(sig,frame_len,frame_step,winfunc=lambda x:numpy.ones((1,x))):
     :returns: an array of frames. Size is NUMFRAMES by frame_len.
     """
     slen = len(sig)
-    frame_len = round(frame_len)
-    frame_step = round(frame_step)
+    frame_len = int(round(frame_len))
+    frame_step = int(round(frame_step))
     if slen <= frame_len: 
         numframes = 1
     else:
-        numframes = 1 + math.ceil((1.0*slen - frame_len)/frame_step)
+        numframes = 1 + int(math.ceil((1.0*slen - frame_len)/frame_step))
         
-    padlen = (numframes-1)*frame_step + frame_len
+    padlen = int((numframes-1)*frame_step + frame_len)
     
     zeros = numpy.zeros((padlen - slen,))
     padsignal = numpy.concatenate((sig,zeros))
