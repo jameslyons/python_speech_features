@@ -36,13 +36,13 @@ From here you can write the features to a file etc.
 Functions provided in features module
 -------------------------------------
    
-.. automodule:: features
+.. automodule:: features.base
     :members:
     
 
 Functions provided in sigproc module
 ------------------------------------
-.. automodule:: sigproc
+.. automodule:: features.sigproc
     :members:
 
 
