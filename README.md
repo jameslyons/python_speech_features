@@ -87,5 +87,5 @@ def fbank(signal,samplerate=16000,winlen=0.025,winstep=0.01,
 |lowfreq| lowest band edge of mel filters. In Hz, default is 0.|
 |highfreq| highest band edge of mel filters. In Hz, default is samplerate/2|
 |preemph| apply preemphasis filter with preemph as coefficient. 0 is no filter. Default is 0.97. |
-|returns| A numpy array of size (NUMFRAMES by nfilt) containing features. Each row holds 1 feature vector. The second return value is the enrgy in each frame (total energy, unwindowed)|
+|returns| A numpy array of size (NUMFRAMES by nfilt) containing features. Each row holds 1 feature vector. The second return value is the energy in each frame (total energy, unwindowed)|
 
