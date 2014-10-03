@@ -53,7 +53,7 @@ def mfcc(signal,samplerate=16000,winlen=0.025,winstep=0.01,numcep=13,
 | winlen | the length of the analysis window in seconds. Default is 0.025s (25 milliseconds)     |
 | winstep | the step between successive windows in seconds. Default is 0.01s (10 milliseconds)     |
 | numcep | the number of cepstrum to return, default 13     |
-| nfilt | the number of filters in the filterbank, default 20. |
+| nfilt | the number of filters in the filterbank, default 26. |
 | nfft | the FFT size. Default is 512. |
 | lowfreq | lowest band edge of mel filters. In Hz, default is 0. |
 | highfreq | highest band edge of mel filters. In Hz, default is samplerate/2 |
@@ -72,7 +72,7 @@ The default parameters should work fairly well for most cases, if you want to ch
 following parameters are supported:
 
 ```python
-def logfbank(signal,samplerate=16000,winlen=0.025,winstep=0.01,
+def fbank(signal,samplerate=16000,winlen=0.025,winstep=0.01,
           nfilt=26,nfft=512,lowfreq=0,highfreq=None,preemph=0.97)
 ```
 
@@ -82,7 +82,7 @@ def logfbank(signal,samplerate=16000,winlen=0.025,winstep=0.01,
 |samplerate| the samplerate of the signal we are working with.|
 |winlen| the length of the analysis window in seconds. Default is 0.025s (25 milliseconds)    |
 |winstep| the step between seccessive windows in seconds. Default is 0.01s (10 milliseconds)    |
-|nfilt| the number of filters in the filterbank, default 20.|
+|nfilt| the number of filters in the filterbank, default 26.|
 |nfft| the FFT size. Default is 512.|
 |lowfreq| lowest band edge of mel filters. In Hz, default is 0.|
 |highfreq| highest band edge of mel filters. In Hz, default is samplerate/2|
