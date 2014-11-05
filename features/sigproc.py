@@ -2,7 +2,6 @@
 # Author: James Lyons 2012
 
 import math
-
 import numpy
 
 

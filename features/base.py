@@ -1,9 +1,8 @@
 # calculate filterbank features. Provides e.g. fbank and mfcc features for use in ASR applications
 # Author: James Lyons 2012
 import numpy
-from scipy.fftpack import dct
-
 from features import sigproc
+from scipy.fftpack import dct
 
 
 def mfcc(signal, samplerate=16000, winlen=0.025, winstep=0.01, numcep=13, nfilt=26, nfft=512, lowfreq=0, highfreq=None,
