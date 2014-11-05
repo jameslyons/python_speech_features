@@ -1,16 +1,19 @@
 # This file includes routines for basic signal processing including framing and computing power spectra.
 # Author: James Lyons 2012
 
-import numpy
 import math
 
-def framesig(sig,frame_len,frame_step,winfunc=lambda x:numpy.ones((1,x))):
+import numpy
+
+
+def framesig(sig, frame_len, frame_step, winfunc=lambda x: numpy.ones((1, x)), VAD=None):
     """Frame a signal into overlapping frames.
 
     :param sig: the audio signal to frame.
     :param frame_len: length of each frame measured in samples.
     :param frame_step: number of samples after the start of the previous frame that the next frame should begin.
-    :param winfunc: the analysis window to apply to each frame. By default no window is applied.    
+    :param winfunc: the analysis window to apply to each frame. By default no window is applied.
+    :param VAD: Voice Activity Detection function, see VoiceActivityDetection.py
     :returns: an array of frames. Size is NUMFRAMES by frame_len.
     """
     slen = len(sig)
@@ -29,7 +32,11 @@ def framesig(sig,frame_len,frame_step,winfunc=lambda x:numpy.ones((1,x))):
     indices = numpy.tile(numpy.arange(0,frame_len),(numframes,1)) + numpy.tile(numpy.arange(0,numframes*frame_step,frame_step),(frame_len,1)).T
     indices = numpy.array(indices,dtype=numpy.int32)
     frames = padsignal[indices]
-    win = numpy.tile(winfunc(frame_len),(numframes,1))
+
+    if VAD is not None:
+        frames = VAD(frames, sig)
+
+    win = numpy.tile(winfunc(frame_len), (frames.shape[0], 1))
     return frames*win
     
     
@@ -91,8 +98,8 @@ def logpowspec(frames,NFFT,norm=1):
     :param NFFT: the FFT length to use. If NFFT > frame_len, the frames are zero-padded. 
     :param norm: If norm=1, the log power spectrum is normalised so that the max value (across all frames) is 1.
     :returns: If frames is an NxD matrix, output will be NxNFFT. Each row will be the log power spectrum of the corresponding frame.
-    """    
-    ps = powspec(frames,NFFT);
+    """
+    ps = powspec(frames, NFFT)
     ps[ps<=1e-30] = 1e-30
     lps = 10*numpy.log10(ps)
     if norm:
