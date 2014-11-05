@@ -1,11 +1,10 @@
 # This file includes routines for basic signal processing including framing and computing power spectra.
 # Author: James Lyons 2012
 
-import math
 import numpy
+import math
 
-
-def framesig(sig, frame_len, frame_step, winfunc=lambda x: numpy.ones((1, x)), VAD=None):
+def framesig(sig,frame_len,frame_step,winfunc=lambda x:numpy.ones((1,x)), VAD=None):
     """Frame a signal into overlapping frames.
 
     :param sig: the audio signal to frame.
@@ -36,11 +35,13 @@ def framesig(sig, frame_len, frame_step, winfunc=lambda x: numpy.ones((1, x)), V
         frames = VAD(frames, sig)
 
     win = numpy.tile(winfunc(frame_len), (frames.shape[0], 1))
+
     return frames*win
     
     
 def deframesig(frames,siglen,frame_len,frame_step,winfunc=lambda x:numpy.ones((1,x))):
-    """Does overlap-add procedure to undo the action of framesig. 
+    """Does overlap-add procedure to undo the action of framesig.
+    Not applicable if Voice Activity Detection has been used in framesig
 
     :param frames: the array of frames.
     :param siglen: the length of the desired signal, use 0 if unknown. Output will be truncated to siglen samples.    
@@ -97,8 +98,8 @@ def logpowspec(frames,NFFT,norm=1):
     :param NFFT: the FFT length to use. If NFFT > frame_len, the frames are zero-padded. 
     :param norm: If norm=1, the log power spectrum is normalised so that the max value (across all frames) is 1.
     :returns: If frames is an NxD matrix, output will be NxNFFT. Each row will be the log power spectrum of the corresponding frame.
-    """
-    ps = powspec(frames, NFFT)
+    """    
+    ps = powspec(frames,NFFT);
     ps[ps<=1e-30] = 1e-30
     lps = 10*numpy.log10(ps)
     if norm:
