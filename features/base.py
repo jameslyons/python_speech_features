@@ -32,7 +32,6 @@ def mfcc(signal, samplerate=16000, winlen=0.025, winstep=0.01, numcep=13, nfilt=
     if appendEnergy: feat[:,0] = numpy.log(energy) # replace first cepstral coefficient with log of frame energy
     return feat
 
-
 def fbank(signal, samplerate=16000, winlen=0.025, winstep=0.01, nfilt=26, nfft=512, lowfreq=0, highfreq=None,
           preemph=0.97, VAD=None):
     """Compute Mel-filterbank energy features from an audio signal.
@@ -60,7 +59,6 @@ def fbank(signal, samplerate=16000, winlen=0.025, winstep=0.01, nfilt=26, nfft=5
     feat = numpy.dot(pspec,fb.T) # compute the filterbank energies
     return feat,energy
 
-
 def logfbank(signal, samplerate=16000, winlen=0.025, winstep=0.01, nfilt=26, nfft=512, lowfreq=0, highfreq=None,
              preemph=0.97, VAD=None):
     """Compute log Mel-filterbank energy features from an audio signal.
@@ -79,7 +77,6 @@ def logfbank(signal, samplerate=16000, winlen=0.025, winstep=0.01, nfilt=26, nff
     """
     feat, energy = fbank(signal, samplerate, winlen, winstep, nfilt, nfft, lowfreq, highfreq, preemph)
     return numpy.log(feat)
-
 
 def ssc(signal, samplerate=16000, winlen=0.025, winstep=0.01, nfilt=26, nfft=512, lowfreq=0, highfreq=None,
         preemph=0.97, VAD=None):
