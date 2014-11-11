@@ -149,10 +149,14 @@ def lifter(cepstra,L=22):
     magnitude of the high frequency DCT coeffs.
     
     :param cepstra: the matrix of mel-cepstra, will be numframes * numcep in size.
-    :param L: the liftering coefficient to use. Default is 22.
+    :param L: the liftering coefficient to use. Default is 22. L <= 0 disables lifter.
     """
-    nframes,ncoeff = numpy.shape(cepstra)
-    n = numpy.arange(ncoeff)
-    lift = 1+ (L/2)*numpy.sin(numpy.pi*n/L)
-    return lift*cepstra
+    if L > 0:
+        nframes,ncoeff = numpy.shape(cepstra)
+        n = numpy.arange(ncoeff)
+        lift = 1+ (L/2)*numpy.sin(numpy.pi*n/L)
+        return lift*cepstra
+    else:
+        # values of L <= 0, do nothing
+        return cepstra
     
