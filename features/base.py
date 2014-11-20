@@ -23,10 +23,13 @@ def mfcc(signal,samplerate=16000,winlen=0.025,winstep=0.01,numcep=13,
     :returns: A numpy array of size (NUMFRAMES by numcep) containing features. Each row holds 1 feature vector.
     """            
     feat,energy = fbank(signal,samplerate,winlen,winstep,nfilt,nfft,lowfreq,highfreq,preemph)
+    feat = numpy.where(feat == 0,numpy.finfo(float).eps,feat)
     feat = numpy.log(feat)
     feat = dct(feat, type=2, axis=1, norm='ortho')[:,:numcep]
     feat = lifter(feat,ceplifter)
-    if appendEnergy: feat[:,0] = numpy.log(energy) # replace first cepstral coefficient with log of frame energy
+    if appendEnergy: 
+        energy = numpy.where(energy == 0,numpy.finfo(float).eps,energy)
+        feat[:,0] = numpy.log(energy) # replace first cepstral coefficient with log of frame energy
     return feat
 
 def fbank(signal,samplerate=16000,winlen=0.025,winstep=0.01,
