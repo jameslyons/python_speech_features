@@ -23,13 +23,10 @@ def mfcc(signal,samplerate=16000,winlen=0.025,winstep=0.01,numcep=13,
     :returns: A numpy array of size (NUMFRAMES by numcep) containing features. Each row holds 1 feature vector.
     """            
     feat,energy = fbank(signal,samplerate,winlen,winstep,nfilt,nfft,lowfreq,highfreq,preemph)
-    feat = numpy.where(feat == 0,numpy.finfo(float).eps,feat)
     feat = numpy.log(feat)
     feat = dct(feat, type=2, axis=1, norm='ortho')[:,:numcep]
     feat = lifter(feat,ceplifter)
-    if appendEnergy: 
-        energy = numpy.where(energy == 0,numpy.finfo(float).eps,energy)
-        feat[:,0] = numpy.log(energy) # replace first cepstral coefficient with log of frame energy
+    if appendEnergy: feat[:,0] = numpy.log(energy) # replace first cepstral coefficient with log of frame energy
     return feat
 
 def fbank(signal,samplerate=16000,winlen=0.025,winstep=0.01,
@@ -39,7 +36,7 @@ def fbank(signal,samplerate=16000,winlen=0.025,winstep=0.01,
     :param signal: the audio signal from which to compute features. Should be an N*1 array
     :param samplerate: the samplerate of the signal we are working with.
     :param winlen: the length of the analysis window in seconds. Default is 0.025s (25 milliseconds)    
-    :param winstep: the step between seccessive windows in seconds. Default is 0.01s (10 milliseconds)    
+    :param winstep: the step between successive windows in seconds. Default is 0.01s (10 milliseconds)    
     :param nfilt: the number of filters in the filterbank, default 26.
     :param nfft: the FFT size. Default is 512.
     :param lowfreq: lowest band edge of mel filters. In Hz, default is 0.
@@ -53,9 +50,12 @@ def fbank(signal,samplerate=16000,winlen=0.025,winstep=0.01,
     frames = sigproc.framesig(signal, winlen*samplerate, winstep*samplerate)
     pspec = sigproc.powspec(frames,nfft)
     energy = numpy.sum(pspec,1) # this stores the total energy in each frame
-    
+    energy = numpy.where(energy == 0,numpy.finfo(float).eps,energy) # if energy is zero, we get problems with log
+        
     fb = get_filterbanks(nfilt,nfft,samplerate)
     feat = numpy.dot(pspec,fb.T) # compute the filterbank energies
+    feat = numpy.where(feat == 0,numpy.finfo(float).eps,feat) # if feat is zero, we get problems with log
+    
     return feat,energy
 
 def logfbank(signal,samplerate=16000,winlen=0.025,winstep=0.01,
@@ -65,7 +65,7 @@ def logfbank(signal,samplerate=16000,winlen=0.025,winstep=0.01,
     :param signal: the audio signal from which to compute features. Should be an N*1 array
     :param samplerate: the samplerate of the signal we are working with.
     :param winlen: the length of the analysis window in seconds. Default is 0.025s (25 milliseconds)    
-    :param winstep: the step between seccessive windows in seconds. Default is 0.01s (10 milliseconds)    
+    :param winstep: the step between successive windows in seconds. Default is 0.01s (10 milliseconds)    
     :param nfilt: the number of filters in the filterbank, default 26.
     :param nfft: the FFT size. Default is 512.
     :param lowfreq: lowest band edge of mel filters. In Hz, default is 0.
@@ -83,7 +83,7 @@ def ssc(signal,samplerate=16000,winlen=0.025,winstep=0.01,
     :param signal: the audio signal from which to compute features. Should be an N*1 array
     :param samplerate: the samplerate of the signal we are working with.
     :param winlen: the length of the analysis window in seconds. Default is 0.025s (25 milliseconds)    
-    :param winstep: the step between seccessive windows in seconds. Default is 0.01s (10 milliseconds)    
+    :param winstep: the step between successive windows in seconds. Default is 0.01s (10 milliseconds)    
     :param nfilt: the number of filters in the filterbank, default 26.
     :param nfft: the FFT size. Default is 512.
     :param lowfreq: lowest band edge of mel filters. In Hz, default is 0.
@@ -95,6 +95,7 @@ def ssc(signal,samplerate=16000,winlen=0.025,winstep=0.01,
     signal = sigproc.preemphasis(signal,preemph)
     frames = sigproc.framesig(signal, winlen*samplerate, winstep*samplerate)
     pspec = sigproc.powspec(frames,nfft)
+    pspec = numpy.where(pspec == 0,numpy.finfo(float).eps,pspec) # if things are all zeros we get problems
     
     fb = get_filterbanks(nfilt,nfft,samplerate)
     feat = numpy.dot(pspec,fb.T) # compute the filterbank energies
