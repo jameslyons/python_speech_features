@@ -52,7 +52,7 @@ def fbank(signal,samplerate=16000,winlen=0.025,winstep=0.01,
     energy = numpy.sum(pspec,1) # this stores the total energy in each frame
     energy = numpy.where(energy == 0,numpy.finfo(float).eps,energy) # if energy is zero, we get problems with log
         
-    fb = get_filterbanks(nfilt,nfft,samplerate)
+    fb = get_filterbanks(nfilt,nfft,samplerate,lowfreq,highfreq)
     feat = numpy.dot(pspec,fb.T) # compute the filterbank energies
     feat = numpy.where(feat == 0,numpy.finfo(float).eps,feat) # if feat is zero, we get problems with log
     
@@ -97,7 +97,7 @@ def ssc(signal,samplerate=16000,winlen=0.025,winstep=0.01,
     pspec = sigproc.powspec(frames,nfft)
     pspec = numpy.where(pspec == 0,numpy.finfo(float).eps,pspec) # if things are all zeros we get problems
     
-    fb = get_filterbanks(nfilt,nfft,samplerate)
+    fb = get_filterbanks(nfilt,nfft,samplerate,lowfreq,highfreq)
     feat = numpy.dot(pspec,fb.T) # compute the filterbank energies
     R = numpy.tile(numpy.linspace(1,samplerate/2,numpy.size(pspec,1)),(numpy.size(pspec,0),1))
     
@@ -131,6 +131,7 @@ def get_filterbanks(nfilt=20,nfft=512,samplerate=16000,lowfreq=0,highfreq=None):
     :returns: A numpy array of size nfilt * (nfft/2 + 1) containing filterbank. Each row holds 1 filter.
     """
     highfreq= highfreq or samplerate/2
+    assert highfreq <= samplerate/2, "highfreq is greater than samplerate/2"
     
     # compute points evenly spaced in mels
     lowmel = hz2mel(lowfreq)
