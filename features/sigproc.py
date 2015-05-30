@@ -4,13 +4,14 @@
 import numpy
 import math
 
-def framesig(sig,frame_len,frame_step,winfunc=lambda x:numpy.ones((1,x))):
+def framesig(sig,frame_len,frame_step,winfunc=lambda x:numpy.ones((1,x)), VAD=None):
     """Frame a signal into overlapping frames.
 
     :param sig: the audio signal to frame.
     :param frame_len: length of each frame measured in samples.
     :param frame_step: number of samples after the start of the previous frame that the next frame should begin.
-    :param winfunc: the analysis window to apply to each frame. By default no window is applied.    
+    :param winfunc: the analysis window to apply to each frame. By default no window is applied.
+    :param VAD: Voice Activity Detection function, see VoiceActivityDetection.py
     :returns: an array of frames. Size is NUMFRAMES by frame_len.
     """
     slen = len(sig)
@@ -29,12 +30,18 @@ def framesig(sig,frame_len,frame_step,winfunc=lambda x:numpy.ones((1,x))):
     indices = numpy.tile(numpy.arange(0,frame_len),(numframes,1)) + numpy.tile(numpy.arange(0,numframes*frame_step,frame_step),(frame_len,1)).T
     indices = numpy.array(indices,dtype=numpy.int32)
     frames = padsignal[indices]
-    win = numpy.tile(winfunc(frame_len),(numframes,1))
+
+    if VAD is not None:
+        frames = VAD(frames, sig)
+
+    win = numpy.tile(winfunc(frame_len), (frames.shape[0], 1))
+
     return frames*win
     
     
 def deframesig(frames,siglen,frame_len,frame_step,winfunc=lambda x:numpy.ones((1,x))):
-    """Does overlap-add procedure to undo the action of framesig. 
+    """Does overlap-add procedure to undo the action of framesig.
+    Not applicable if Voice Activity Detection has been used in framesig
 
     :param frames: the array of frames.
     :param siglen: the length of the desired signal, use 0 if unknown. Output will be truncated to siglen samples.    
