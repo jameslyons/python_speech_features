@@ -4,7 +4,7 @@
 import numpy
 import math
 
-def framesig(sig,frame_len,frame_step,winfunc=lambda x:numpy.ones((1,x))):
+def framesig(sig,frame_len,frame_step,winfunc=lambda x:numpy.ones((x,))):
     """Frame a signal into overlapping frames.
 
     :param sig: the audio signal to frame.
@@ -33,7 +33,7 @@ def framesig(sig,frame_len,frame_step,winfunc=lambda x:numpy.ones((1,x))):
     return frames*win
     
     
-def deframesig(frames,siglen,frame_len,frame_step,winfunc=lambda x:numpy.ones((1,x))):
+def deframesig(frames,siglen,frame_len,frame_step,winfunc=lambda x:numpy.ones((x,))):
     """Does overlap-add procedure to undo the action of framesig. 
 
     :param frames: the array of frames.
@@ -54,8 +54,8 @@ def deframesig(frames,siglen,frame_len,frame_step,winfunc=lambda x:numpy.ones((1
     
     if siglen <= 0: siglen = padlen
     
-    rec_signal = numpy.zeros((1,padlen))
-    window_correction = numpy.zeros((1,padlen))
+    rec_signal = numpy.zeros((padlen,))
+    window_correction = numpy.zeros((padlen,))
     win = winfunc(frame_len)
     
     for i in range(0,numframes):
