@@ -29,7 +29,7 @@ To use MFCC features::
     mfcc_feat = mfcc(sig,rate)
     fbank_feat = logfbank(sig,rate)
     
-    print fbank_feat[1:3,:]
+    print(fbank_feat[1:3,:])
 
 From here you can write the features to a file etc.
 
