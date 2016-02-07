@@ -6,4 +6,4 @@ import scipy.io.wavfile as wav
 mfcc_feat = mfcc(sig,rate)
 fbank_feat = logfbank(sig,rate)
 
-print fbank_feat[1:3,:]
+print(fbank_feat[1:3,:])
