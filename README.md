@@ -7,6 +7,18 @@ If you are not sure what MFCCs are, and would like to know more have a look at t
 
 Documentation for this project can be found here: http://python-speech-features.readthedocs.org/en/latest/
 
+Installation
+---------------------------
+
+From source:
+```bash
+git clone https://github.com/jameslyons/python_speech_features
+python setup.py install
+```
+
+Usage
+---------------------------
+
 Supported features:
 
 - Mel Frequency Cepstral Coefficients
