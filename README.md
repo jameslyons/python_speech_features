@@ -7,6 +7,23 @@ If you are not sure what MFCCs are, and would like to know more have a look at t
 
 Documentation for this project can be found here: http://python-speech-features.readthedocs.org/en/latest/
 
+---
+Installation
+-----------------------------
+First, clone this repository to your local machine using the following command.
+```
+$> git clone https://github.com/jameslyons/python_speech_features.git
+```
+Now, from inside the cloned repository, build and install the package.
+```
+$> cd python_speech_features
+$> python setup.py build
+$> sudo python setup.py install
+```
+and that's it! You can now import these features in python.
+
+---
+
 Supported features:
 
 - Mel Frequency Cepstral Coefficients
