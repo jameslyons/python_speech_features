@@ -184,5 +184,5 @@ def delta(feat, N):
     denom = sum([2*i*i for i in range(1,N+1)])
     dfeat = []
     for j in range(NUMFRAMES):
-        dfeat.append(numpy.sum([n*feat[N+j+n] for n in range(-1*N,N+1)], axis=0))
+        dfeat.append(numpy.sum([n*feat[N+j+n] for n in range(-1*N,N+1)], axis=0)/denom)
     return dfeat
