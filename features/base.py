@@ -1,6 +1,7 @@
 # calculate filterbank features. Provides e.g. fbank and mfcc features for use in ASR applications
 # Author: James Lyons 2012
 import numpy
+import math
 from features import sigproc
 from scipy.fftpack import dct
 
@@ -10,9 +11,78 @@ try:
 except:
   xrange=range
 
+def mfcc_lm(signal,samplerate=16000,winlen=0.025,winstep=0.01,numcep=13,
+         nfilt=26,nfft=512,lowfreq=0,highfreq=None,preemph=0.97,ceplifter=22,appendEnergy=True,
+         winfunc=lambda x:numpy.ones((x,)), chk_frames=100,channel=0):
+    """Compute MFCC features using smaller chunks of audio signal for lower memory usage.
+       Note: because of preemphasis, every chk_frames-th frame will slightly differ from chk_frames-th
+       frame computed by ordinary mfcc function. This can be verified by setting preemph=0, which
+       should yeld the same result in either case.
+
+    :param signal: the audio signal from which to compute features. Should be an N*1 array
+    :param samplerate: the samplerate of the signal we are working with.
+    :param winlen: the length of the analysis window in seconds. Default is 0.025s (25 milliseconds)
+    :param winstep: the step between successive windows in seconds. Default is 0.01s (10 milliseconds)
+    :param numcep: the number of cepstrum to return, default 13
+    :param nfilt: the number of filters in the filterbank, default 26.
+    :param nfft: the FFT size. Default is 512.
+    :param lowfreq: lowest band edge of mel filters. In Hz, default is 0.
+    :param highfreq: highest band edge of mel filters. In Hz, default is samplerate/2
+    :param preemph: apply preemphasis filter with preemph as coefficient. 0 is no filter. Default is 0.97. 
+    :param ceplifter: apply a lifter to final cepstral coefficients. 0 is no lifter. Default is 22. 
+    :param appendEnergy: if this is true, the zeroth cepstral coefficient is replaced with the log of the total frame energy.
+    :param winfunc: the analysis window to apply to each frame. By default no window is applied. 
+    :param chk_frames: the number of frames used for each chunk, default 100.
+    :param channel: channel in multi-channel (stereo) audio, default 0
+    :returns: A numpy array of size (NUMFRAMES by numcep) containing features. Each row holds 1 feature vector.
+    """
+
+    if signal.ndim > 1:
+        nch = signal.shape[1]
+        if channel < nch:
+            signal = signal[:,channel]
+        else:
+            signal = signal[:,0] #1st channel default
+
+    slen = len(signal)
+    frame_len = int(sigproc.round_half_up(winlen*samplerate))
+    frame_step = int(sigproc.round_half_up(winstep*samplerate))
+
+    if slen <= frame_len:
+        numframes = 1
+    else:
+        numframes = 1 + int(math.ceil((1.0*slen - frame_len)/frame_step))
+
+    padlen = int((numframes-1)*frame_step + frame_len)
+    zeros = numpy.zeros((padlen - slen,))
+    padsignal = numpy.concatenate((signal,zeros))
+    features=[]
+
+    if chk_frames < 0:
+        chk_frames = 1
+    if chk_frames > numframes:
+        chk_frames = numframes
+
+    chk_len = frame_len + (chk_frames-1)*frame_step
+
+    for i in range(int(math.ceil(float(numframes) / chk_frames))):
+        start = i*chk_len - i*frame_len + i*frame_step
+        if start < 0:
+            start = 0
+        end = start + chk_len
+        if end>slen:
+            end = slen
+
+        feat = mfcc(signal[start:end],samplerate=samplerate,winlen=winlen,winstep=winstep,
+                    numcep=numcep,nfilt=nfilt,nfft=nfft,lowfreq=lowfreq,
+                    highfreq=highfreq,preemph=preemph,ceplifter=ceplifter,
+                    appendEnergy=appendEnergy,winfunc=winfunc)
+        features.append(feat)
+    return numpy.concatenate(features)
+
 def mfcc(signal,samplerate=16000,winlen=0.025,winstep=0.01,numcep=13,
          nfilt=26,nfft=512,lowfreq=0,highfreq=None,preemph=0.97,ceplifter=22,appendEnergy=True,
-         winfunc=lambda x:numpy.ones((x,))):
+         winfunc=lambda x:numpy.ones((x,)),channel=0):
     """Compute MFCC features from an audio signal.
 
     :param signal: the audio signal from which to compute features. Should be an N*1 array
@@ -28,8 +98,17 @@ def mfcc(signal,samplerate=16000,winlen=0.025,winstep=0.01,numcep=13,
     :param ceplifter: apply a lifter to final cepstral coefficients. 0 is no lifter. Default is 22. 
     :param appendEnergy: if this is true, the zeroth cepstral coefficient is replaced with the log of the total frame energy.
     :param winfunc: the analysis window to apply to each frame. By default no window is applied.
+    :param channel: channel in multi-channel (stereo) audio, default 0
     :returns: A numpy array of size (NUMFRAMES by numcep) containing features. Each row holds 1 feature vector.
     """            
+
+    if signal.ndim > 1:
+        nch = signal.shape[1]
+        if channel < nch:
+            signal = signal[:,channel]
+        else:
+            signal = signal[:,0] #1st channel default
+
     feat,energy = fbank(signal,samplerate,winlen,winstep,nfilt,nfft,lowfreq,highfreq,preemph,winfunc)
     feat = numpy.log(feat)
     feat = dct(feat, type=2, axis=1, norm='ortho')[:,:numcep]
