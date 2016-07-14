@@ -10,7 +10,14 @@ Documentation for this project can be found here: http://python-speech-features.
 Installation
 ---------------------------
 
-From source:
+This project is on pypi: https://pypi.python.org/pypi/speech-features
+
+To install from pypi: 
+```bash
+pip install python_speech_features
+```
+
+From this repository:
 ```bash
 git clone https://github.com/jameslyons/python_speech_features
 python setup.py install
