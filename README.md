@@ -38,8 +38,8 @@ You will need numpy and scipy to run these files.
 To use MFCC features,
 
 ```python
-from features import mfcc
-from features import logfbank
+from python_speech_features import mfcc
+from python_speech_features import logfbank
 import scipy.io.wavfile as wav
 
 (rate,sig) = wav.read("file.wav")
