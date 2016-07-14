@@ -171,7 +171,7 @@ def lifter(cepstra, L=22):
     else:
         # values of L <= 0, do nothing
         return cepstra
-    
+
 def delta(feat, N):
     """Compute delta features from a feature vector sequence.
 
