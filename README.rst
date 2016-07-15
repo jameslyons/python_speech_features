@@ -34,7 +34,7 @@ Supported features:
 - Log Filterbank Energies
 - Spectral Subband Centroids
 
-`Example use<example.py>`_
+`Example use <example.py>`_
 
 From here you can write the features to a file etc.
 
