@@ -1,4 +1,7 @@
-from distutils.core import setup
+try:
+    from setuptools import setup #enables develop
+except ImportError:
+    from distutils.core import setup
 
 setup(name='python_speech_features',
       version='0.3',

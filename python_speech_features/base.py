@@ -1,14 +1,9 @@
 # calculate filterbank features. Provides e.g. fbank and mfcc features for use in ASR applications
 # Author: James Lyons 2012
+from __future__ import division
 import numpy
 from python_speech_features import sigproc
 from scipy.fftpack import dct
-
-# make it python3.x compatible
-try:
-  xrange(1)
-except:
-  xrange=range
 
 def mfcc(signal,samplerate=16000,winlen=0.025,winstep=0.01,numcep=13,
          nfilt=26,nfft=512,lowfreq=0,highfreq=None,preemph=0.97,ceplifter=22,appendEnergy=True,
@@ -121,7 +116,7 @@ def hz2mel(hz):
     :param hz: a value in Hz. This can also be a numpy array, conversion proceeds element-wise.
     :returns: a value in Mels. If an array was passed in, an identical sized array is returned.
     """
-    return 2595 * numpy.log10(1+hz/700.0)
+    return 2595 * numpy.log10(1+hz/700.)
     
 def mel2hz(mel):
     """Convert a value in Mels to Hertz
@@ -153,15 +148,15 @@ def get_filterbanks(nfilt=20,nfft=512,samplerate=16000,lowfreq=0,highfreq=None):
     #  from Hz to fft bin number
     bin = numpy.floor((nfft+1)*mel2hz(melpoints)/samplerate)
 
-    fbank = numpy.zeros([nfilt,nfft/2+1])
-    for j in xrange(0,nfilt):
-        for i in xrange(int(bin[j]),int(bin[j+1])):
-            fbank[j,i] = (i - bin[j])/(bin[j+1]-bin[j])
-        for i in xrange(int(bin[j+1]),int(bin[j+2])):
-            fbank[j,i] = (bin[j+2]-i)/(bin[j+2]-bin[j+1])
+    fbank = numpy.zeros([nfilt,nfft//2+1])
+    for j in range(0,nfilt):
+        for i in range(int(bin[j]), int(bin[j+1])):
+            fbank[j,i] = (i - bin[j]) / (bin[j+1]-bin[j])
+        for i in range(int(bin[j+1]), int(bin[j+2])):
+            fbank[j,i] = (bin[j+2]-i) / (bin[j+2]-bin[j+1])
     return fbank                 
     
-def lifter(cepstra,L=22):
+def lifter(cepstra, L=22):
     """Apply a cepstral lifter the the matrix of cepstra. This has the effect of increasing the
     magnitude of the high frequency DCT coeffs.
     
@@ -171,7 +166,7 @@ def lifter(cepstra,L=22):
     if L > 0:
         nframes,ncoeff = numpy.shape(cepstra)
         n = numpy.arange(ncoeff)
-        lift = 1+ (L/2)*numpy.sin(numpy.pi*n/L)
+        lift = 1 + (L/2.)*numpy.sin(numpy.pi*n/L)
         return lift*cepstra
     else:
         # values of L <= 0, do nothing
