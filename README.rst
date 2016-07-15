@@ -4,14 +4,14 @@ python_speech_features
 
 This library provides common speech features for ASR including MFCCs and filterbank energies.
 If you are not sure what MFCCs are, and would like to know more have a look at this 
-[MFCC tutorial](http://www.practicalcryptography.com/miscellaneous/machine-learning/guide-mel-frequency-cepstral-coefficients-mfccs/).
+`MFCC tutorial <http://www.practicalcryptography.com/miscellaneous/machine-learning/guide-mel-frequency-cepstral-coefficients-mfccs/>`_
 
-Documentation for this project can be found here: http://python-speech-features.readthedocs.org/en/latest/
+`Project Documentation <http://python-speech-features.readthedocs.org/en/latest/>`_
 
 Installation
 ============
 
-This project is on pypi: https://pypi.python.org/pypi/python_speech_features
+This `project is on pypi <https://pypi.python.org/pypi/python_speech_features>`_
 
 To install from pypi:: 
 
