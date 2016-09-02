@@ -79,6 +79,7 @@ def logfbank(signal,samplerate=16000,winlen=0.025,winstep=0.01,
     :returns: A numpy array of size (NUMFRAMES by nfilt) containing features. Each row holds 1 feature vector. 
     """          
     feat,energy = fbank(signal,samplerate,winlen,winstep,nfilt,nfft,lowfreq,highfreq,preemph)
+    if appendEnergy: feat = numpy.column_stack((energy,feat)) # append frame energy (will be taken log before return)
     return numpy.log(feat)
 
 def ssc(signal,samplerate=16000,winlen=0.025,winstep=0.01,
