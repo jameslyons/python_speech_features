@@ -76,7 +76,7 @@ def magspec(frames,NFFT):
 
     :param frames: the array of frames. Each row is a frame.
     :param NFFT: the FFT length to use. If NFFT > frame_len, the frames are zero-padded. 
-    :returns: If frames is an NxD matrix, output will be NxNFFT. Each row will be the magnitude spectrum of the corresponding frame.
+    :returns: If frames is an NxD matrix, output will be Nx(NFFT/2+1). Each row will be the magnitude spectrum of the corresponding frame.
     """    
     complex_spec = numpy.fft.rfft(frames,NFFT)
     return numpy.absolute(complex_spec)
@@ -86,7 +86,7 @@ def powspec(frames,NFFT):
 
     :param frames: the array of frames. Each row is a frame.
     :param NFFT: the FFT length to use. If NFFT > frame_len, the frames are zero-padded. 
-    :returns: If frames is an NxD matrix, output will be NxNFFT. Each row will be the power spectrum of the corresponding frame.
+    :returns: If frames is an NxD matrix, output will be Nx(NFFT/2+1). Each row will be the power spectrum of the corresponding frame.
     """    
     return 1.0/NFFT * numpy.square(magspec(frames,NFFT))
     
@@ -96,7 +96,7 @@ def logpowspec(frames,NFFT,norm=1):
     :param frames: the array of frames. Each row is a frame.
     :param NFFT: the FFT length to use. If NFFT > frame_len, the frames are zero-padded. 
     :param norm: If norm=1, the log power spectrum is normalised so that the max value (across all frames) is 1.
-    :returns: If frames is an NxD matrix, output will be NxNFFT. Each row will be the log power spectrum of the corresponding frame.
+    :returns: If frames is an NxD matrix, output will be Nx(NFFT/2+1). Each row will be the log power spectrum of the corresponding frame.
     """    
     ps = powspec(frames,NFFT);
     ps[ps<=1e-30] = 1e-30
