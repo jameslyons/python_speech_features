@@ -171,4 +171,18 @@ def lifter(cepstra, L=22):
     else:
         # values of L <= 0, do nothing
         return cepstra
-    
+
+def delta(feat, N):
+    """Compute delta features from a feature vector sequence.
+
+    :param feat: A numpy array of size (NUMFRAMES by number of features) containing features. Each row holds 1 feature vector.
+    :param N: For each frame, calculate delta features based on preceding and following N frames
+    :returns: A numpy array of size (NUMFRAMES by number of features) containing delta features. Each row holds 1 delta feature vector.
+    """
+    NUMFRAMES = len(feat)
+    feat = numpy.concatenate(([feat[0] for i in range(N)], feat, [feat[-1] for i in range(N)]))
+    denom = sum([2*i*i for i in range(1,N+1)])
+    dfeat = []
+    for j in range(NUMFRAMES):
+        dfeat.append(numpy.sum([n*feat[N+j+n] for n in range(-1*N,N+1)], axis=0)/denom)
+    return dfeat
