@@ -14,15 +14,15 @@ You will need numpy and scipy to run these files. The code for this project is a
 
 Supported features:
 
-- :py:meth:`features.mfcc` - Mel Frequency Cepstral Coefficients
-- :py:meth:`features.fbank` - Filterbank Energies
-- :py:meth:`features.logfbank` - Log Filterbank Energies
-- :py:meth:`features.ssc` - Spectral Subband Centroids
+- :py:meth:`python_speech_features.mfcc` - Mel Frequency Cepstral Coefficients
+- :py:meth:`python_speech_features.fbank` - Filterbank Energies
+- :py:meth:`python_speech_features.logfbank` - Log Filterbank Energies
+- :py:meth:`python_speech_features.ssc` - Spectral Subband Centroids
 
 To use MFCC features::
 
-    from features import mfcc
-    from features import logfbank
+    from python_speech_features import mfcc
+    from python_speech_features import logfbank
     import scipy.io.wavfile as wav
     
     (rate,sig) = wav.read("file.wav")
@@ -33,16 +33,16 @@ To use MFCC features::
 
 From here you can write the features to a file etc.
 
-Functions provided in features module
+Functions provided in python_speech_features module
 -------------------------------------
    
-.. automodule:: features.base
+.. automodule:: python_speech_features.base
     :members:
     
 
 Functions provided in sigproc module
 ------------------------------------
-.. automodule:: features.sigproc
+.. automodule:: python_speech_features.sigproc
     :members:
 
 
