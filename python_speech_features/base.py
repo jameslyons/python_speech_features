@@ -186,9 +186,9 @@ def delta(features, radio):
     if r < 1:
         raise ValueError('radio must be an integer > 0')
     n_frames, n_feat = features.shape
-    padded = np.pad(features, ((r, r), (0, 0)), mode='edge')
+    padded = numpy.pad(features, ((r, r), (0, 0)), mode='edge')
     denominator = float((r * (r+1) * (2*r + 1)) / 3)    # = 2 * sum([i**2 for i in range(1, r+1)])
-    delta_feat = np.empty((n_frames, n_feat))
+    delta_feat = numpy.empty((n_frames, n_feat))
     for t in range(n_frames):
-        delta_feat[t] = np.sum([n * (padded[r+t + n] - padded[r+t - n]) for n in range(1, r+1)], axis=0) / denominator
+        delta_feat[t] = numpy.sum([n * (padded[r+t + n] - padded[r+t - n]) for n in range(1, r+1)], axis=0) / denominator
     return delta_feat
