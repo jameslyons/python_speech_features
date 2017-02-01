@@ -172,17 +172,23 @@ def lifter(cepstra, L=22):
         # values of L <= 0, do nothing
         return cepstra
 
-def delta(feat, N):
-    """Compute delta features from a feature vector sequence.
 
-    :param feat: A numpy array of size (NUMFRAMES by number of features) containing features. Each row holds 1 feature vector.
-    :param N: For each frame, calculate delta features based on preceding and following N frames
-    :returns: A numpy array of size (NUMFRAMES by number of features) containing delta features. Each row holds 1 delta feature vector.
+def delta(features, radio):
+    """Compute delta features from a feature vector sequence. To compute delta-delta features
+
+    :param features: A numpy array of size (num_frames, num_features) containing features (each row holds 1 feature vector).
+    :param radio: The radio of the neighborhood centered at features[t] used to calculate delta[t].
+    At time step t, delta[t] is calculated as a function of the elements in features[t-radio : t+radio+1]
+    (the calculation is done on a padded version of the array features).
+    :returns: A numpy array containing the delta features; it's the same size as the input array.
     """
-    NUMFRAMES = len(feat)
-    feat = numpy.concatenate(([feat[0] for i in range(N)], feat, [feat[-1] for i in range(N)]))
-    denom = sum([2*i*i for i in range(1,N+1)])
-    dfeat = []
-    for j in range(NUMFRAMES):
-        dfeat.append(numpy.sum([n*feat[N+j+n] for n in range(-1*N,N+1)], axis=0)/denom)
-    return dfeat
+    r = radio # for shortness
+    if r < 1:
+        raise ValueError('radio must be an integer > 0')
+    n_frames, n_feat = features.shape
+    padded = numpy.pad(features, ((r, r), (0, 0)), mode='edge')
+    denominator = float((r * (r+1) * (2*r + 1)) / 3)    # = 2 * sum([i**2 for i in range(1, r+1)])
+    delta_feat = numpy.empty((n_frames, n_feat))
+    for t in range(n_frames):
+        delta_feat[t] = numpy.sum([n * (padded[r+t + n] - padded[r+t - n]) for n in range(1, r+1)], axis=0) / denominator
+    return delta_feat
