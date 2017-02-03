@@ -180,9 +180,9 @@ def delta(feat, N):
     :returns: A numpy array of size (NUMFRAMES by number of features) containing delta features. Each row holds 1 delta feature vector.
     """
     NUMFRAMES = len(feat)
-    feat = numpy.concatenate(([feat[0] for i in range(N)], feat, [feat[-1] for i in range(N)]))
-    denom = sum([2*i*i for i in range(1,N+1)])
-    dfeat = []
-    for j in range(NUMFRAMES):
-        dfeat.append(numpy.sum([n*feat[N+j+n] for n in range(-1*N,N+1)], axis=0)/denom)
-    return dfeat
+    denominator = 2 * sum([i**2 for i in range(1, N+1)])
+    delta_feat = numpy.empty_like(feat)
+    padded = numpy.pad(feat, ((N, N), (0, 0)), mode='edge')   # padded version of feat
+    for t in range(NUMFRAMES):
+        delta_feat[t] = numpy.sum([n * padded[N+t + n] for n in range(-N, N+1)], axis=0) / denominator
+    return delta_feat
