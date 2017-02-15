@@ -4,7 +4,7 @@ import decimal
 
 import numpy
 import math
-
+import logging
 
 def round_half_up(number):
     return int(decimal.Decimal(number).quantize(decimal.Decimal('1'), rounding=decimal.ROUND_HALF_UP))
@@ -72,17 +72,20 @@ def deframesig(frames,siglen,frame_len,frame_step,winfunc=lambda x:numpy.ones((x
     return rec_signal[0:siglen]
     
 def magspec(frames,NFFT):
-    """Compute the magnitude spectrum of each frame in frames. If frames is an NxD matrix, output will be NxNFFT. 
+    """Compute the magnitude spectrum of each frame in frames. If frames is an NxD matrix, output will be Nx(NFFT/2+1). 
 
     :param frames: the array of frames. Each row is a frame.
     :param NFFT: the FFT length to use. If NFFT > frame_len, the frames are zero-padded. 
     :returns: If frames is an NxD matrix, output will be Nx(NFFT/2+1). Each row will be the magnitude spectrum of the corresponding frame.
     """    
+    if numpy.shape(frames)[1] > NFFT: 
+        logging.warn('frame length (%d) is greater than FFT size (%d), frame will be truncated. Increase NFFT to avoid.', numpy.shape(frames)[1], NFFT)
     complex_spec = numpy.fft.rfft(frames,NFFT)
+    print(numpy.shape(complex_spec))
     return numpy.absolute(complex_spec)
           
 def powspec(frames,NFFT):
-    """Compute the power spectrum of each frame in frames. If frames is an NxD matrix, output will be NxNFFT. 
+    """Compute the power spectrum of each frame in frames. If frames is an NxD matrix, output will be Nx(NFFT/2+1). 
 
     :param frames: the array of frames. Each row is a frame.
     :param NFFT: the FFT length to use. If NFFT > frame_len, the frames are zero-padded. 
@@ -91,7 +94,7 @@ def powspec(frames,NFFT):
     return 1.0/NFFT * numpy.square(magspec(frames,NFFT))
     
 def logpowspec(frames,NFFT,norm=1):
-    """Compute the log power spectrum of each frame in frames. If frames is an NxD matrix, output will be NxNFFT. 
+    """Compute the log power spectrum of each frame in frames. If frames is an NxD matrix, output will be Nx(NFFT/2+1). 
 
     :param frames: the array of frames. Each row is a frame.
     :param NFFT: the FFT length to use. If NFFT > frame_len, the frames are zero-padded. 
