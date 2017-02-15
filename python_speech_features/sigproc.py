@@ -81,7 +81,6 @@ def magspec(frames,NFFT):
     if numpy.shape(frames)[1] > NFFT: 
         logging.warn('frame length (%d) is greater than FFT size (%d), frame will be truncated. Increase NFFT to avoid.', numpy.shape(frames)[1], NFFT)
     complex_spec = numpy.fft.rfft(frames,NFFT)
-    print(numpy.shape(complex_spec))
     return numpy.absolute(complex_spec)
           
 def powspec(frames,NFFT):
