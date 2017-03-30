@@ -97,7 +97,7 @@ def logpowspec(frames,NFFT,norm=1):
 
     :param frames: the array of frames. Each row is a frame.
     :param NFFT: the FFT length to use. If NFFT > frame_len, the frames are zero-padded. 
-    :param norm: If norm=1, the log power spectrum is normalised so that the max value (across all frames) is 1.
+    :param norm: If norm=1, the log power spectrum is normalised so that the max value (across all frames) is 0.
     :returns: If frames is an NxD matrix, output will be Nx(NFFT/2+1). Each row will be the log power spectrum of the corresponding frame.
     """    
     ps = powspec(frames,NFFT);
