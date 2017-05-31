@@ -20,7 +20,7 @@ def mfcc(signal,samplerate=16000,winlen=0.025,winstep=0.01,numcep=13,
     :param lowfreq: lowest band edge of mel filters. In Hz, default is 0.
     :param highfreq: highest band edge of mel filters. In Hz, default is samplerate/2
     :param preemph: apply preemphasis filter with preemph as coefficient. 0 is no filter. Default is 0.97. 
-    :param ceplifter: apply a lifter to final cepstral coefficients. 0 is no lifter. Default is 22. 
+    :param ceplifter: apply a lifter to final cepstral coefficients. 0 is no filter. Default is 22. 
     :param appendEnergy: if this is true, the zeroth cepstral coefficient is replaced with the log of the total frame energy.
     :param winfunc: the analysis window to apply to each frame. By default no window is applied.
     :returns: A numpy array of size (NUMFRAMES by numcep) containing features. Each row holds 1 feature vector.
