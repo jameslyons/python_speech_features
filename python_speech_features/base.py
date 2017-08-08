@@ -22,7 +22,7 @@ def mfcc(signal,samplerate=16000,winlen=0.025,winstep=0.01,numcep=13,
     :param preemph: apply preemphasis filter with preemph as coefficient. 0 is no filter. Default is 0.97. 
     :param ceplifter: apply a lifter to final cepstral coefficients. 0 is no lifter. Default is 22. 
     :param appendEnergy: if this is true, the zeroth cepstral coefficient is replaced with the log of the total frame energy.
-    :param winfunc: the analysis window to apply to each frame. By default no window is applied.
+    :param winfunc: the analysis window to apply to each frame. By default no window is applied. You can use numpy window functions here e.g. winfunc=numpy.hamming 
     :returns: A numpy array of size (NUMFRAMES by numcep) containing features. Each row holds 1 feature vector.
     """            
     feat,energy = fbank(signal,samplerate,winlen,winstep,nfilt,nfft,lowfreq,highfreq,preemph,winfunc)
@@ -46,7 +46,7 @@ def fbank(signal,samplerate=16000,winlen=0.025,winstep=0.01,
     :param lowfreq: lowest band edge of mel filters. In Hz, default is 0.
     :param highfreq: highest band edge of mel filters. In Hz, default is samplerate/2
     :param preemph: apply preemphasis filter with preemph as coefficient. 0 is no filter. Default is 0.97.
-    :param winfunc: the analysis window to apply to each frame. By default no window is applied.
+    :param winfunc: the analysis window to apply to each frame. By default no window is applied. You can use numpy window functions here e.g. winfunc=numpy.hamming
     :returns: 2 values. The first is a numpy array of size (NUMFRAMES by nfilt) containing features. Each row holds 1 feature vector. The
         second return value is the energy in each frame (total energy, unwindowed)
     """          
@@ -95,7 +95,7 @@ def ssc(signal,samplerate=16000,winlen=0.025,winstep=0.01,
     :param lowfreq: lowest band edge of mel filters. In Hz, default is 0.
     :param highfreq: highest band edge of mel filters. In Hz, default is samplerate/2
     :param preemph: apply preemphasis filter with preemph as coefficient. 0 is no filter. Default is 0.97.
-    :param winfunc: the analysis window to apply to each frame. By default no window is applied.
+    :param winfunc: the analysis window to apply to each frame. By default no window is applied. You can use numpy window functions here e.g. winfunc=numpy.hamming
     :returns: A numpy array of size (NUMFRAMES by nfilt) containing features. Each row holds 1 feature vector. 
     """          
     highfreq= highfreq or samplerate/2
