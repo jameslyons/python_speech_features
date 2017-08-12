@@ -25,6 +25,7 @@ def framesig(sig, frame_len, frame_step, winfunc=lambda x: numpy.ones((x,)), str
     :param frame_len: length of each frame measured in samples.
     :param frame_step: number of samples after the start of the previous frame that the next frame should begin.
     :param winfunc: the analysis window to apply to each frame. By default no window is applied.
+    :param stride_trick: use stride trick to compute the rolling window and window multiplication faster
     :returns: an array of frames. Size is NUMFRAMES by frame_len.
     """
     slen = len(sig)
