@@ -4,7 +4,7 @@ except ImportError:
     from distutils.core import setup
 
 setup(name='python_speech_features',
-      version='0.4',
+      version='0.6',
       description='Python Speech Feature extraction',
       author='James Lyons',
       author_email='james.lyons0@gmail.com',
