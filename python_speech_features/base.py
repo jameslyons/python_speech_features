@@ -143,17 +143,18 @@ def get_filterbanks(nfilt=20,nfft=512,samplerate=16000,lowfreq=0,highfreq=None):
     # compute points evenly spaced in mels
     lowmel = hz2mel(lowfreq)
     highmel = hz2mel(highfreq)
-    melpoints = numpy.linspace(lowmel,highmel,nfilt+2)
-    # our points are in Hz, but we use fft bins, so we have to convert
-    #  from Hz to fft bin number
-    bin = numpy.floor((nfft+1)*mel2hz(melpoints)/samplerate)
+    melpoints_in_hz = mel2hz(numpy.linspace(lowmel, highmel, nfilt+2))
+    fbank = numpy.zeros([nfilt, nfft//2+1])
+    x_domain = numpy.linspace(0, samplerate/2, nfft//2+1)
+    for j in range(0, nfilt):
+        a1 = 1.0 / (melpoints_in_hz[j + 1] - melpoints_in_hz[j])
+        b1 = -a1 * melpoints_in_hz[j]
+        a2 = 1.0 / (melpoints_in_hz[j + 1] - melpoints_in_hz[j + 2])
+        b2 = -a2 * melpoints_in_hz[j + 2]
+        left_triangle_function = a1 * x_domain + b1
+        right_triangle_function = a2 * x_domain + b2
+        fbank[j, :] = numpy.clip(numpy.min([left_triangle_function, right_triangle_function], axis=0), a_min=0, a_max=1)
 
-    fbank = numpy.zeros([nfilt,nfft//2+1])
-    for j in range(0,nfilt):
-        for i in range(int(bin[j]), int(bin[j+1])):
-            fbank[j,i] = (i - bin[j]) / (bin[j+1]-bin[j])
-        for i in range(int(bin[j+1]), int(bin[j+2])):
-            fbank[j,i] = (bin[j+2]-i) / (bin[j+2]-bin[j+1])
     return fbank
 
 def lifter(cepstra, L=22):
