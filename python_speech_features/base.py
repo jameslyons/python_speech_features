@@ -34,7 +34,7 @@ def mfcc(signal,samplerate=16000,winlen=0.025,winstep=0.01,numcep=13,
 
 def fbank(signal,samplerate=16000,winlen=0.025,winstep=0.01,
           nfilt=26,nfft=512,lowfreq=0,highfreq=None,preemph=0.97,
-          winfunc=lambda x:numpy.ones((x,))):
+          winfunc=lambda x:numpy.ones((x,)), specfilt=False):
     """Compute Mel-filterbank energy features from an audio signal.
 
     :param signal: the audio signal from which to compute features. Should be an N*1 array
@@ -54,6 +54,14 @@ def fbank(signal,samplerate=16000,winlen=0.025,winstep=0.01,
     signal = sigproc.preemphasis(signal,preemph)
     frames = sigproc.framesig(signal, winlen*samplerate, winstep*samplerate, winfunc)
     pspec = sigproc.powspec(frames,nfft)
+
+    if specfilt:   # added by DK
+        from scipy.ndimage.filters import gaussian_filter1d
+        if specfilt[0] > 0:
+            pspec = gaussian_filter1d(pspec, sigma=specfilt[0])
+        if specfilt[1] > 0:
+            pspec = gaussian_filter1d(pspec, sigma=specfilt[1], axis=0)
+
     energy = numpy.sum(pspec,1) # this stores the total energy in each frame
     energy = numpy.where(energy == 0,numpy.finfo(float).eps,energy) # if energy is zero, we get problems with log
 
