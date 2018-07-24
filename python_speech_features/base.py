@@ -64,7 +64,8 @@ def fbank(signal,samplerate=16000,winlen=0.025,winstep=0.01,
     return feat,energy
 
 def logfbank(signal,samplerate=16000,winlen=0.025,winstep=0.01,
-          nfilt=26,nfft=512,lowfreq=0,highfreq=None,preemph=0.97):
+             nfilt=26,nfft=512,lowfreq=0,highfreq=None,preemph=0.97,
+             winfunc=lambda x:numpy.ones((x,))):
     """Compute log Mel-filterbank energy features from an audio signal.
 
     :param signal: the audio signal from which to compute features. Should be an N*1 array
@@ -76,9 +77,10 @@ def logfbank(signal,samplerate=16000,winlen=0.025,winstep=0.01,
     :param lowfreq: lowest band edge of mel filters. In Hz, default is 0.
     :param highfreq: highest band edge of mel filters. In Hz, default is samplerate/2
     :param preemph: apply preemphasis filter with preemph as coefficient. 0 is no filter. Default is 0.97.
+    :param winfunc: the analysis window to apply to each frame. By default no window is applied. You can use numpy window functions here e.g. winfunc=numpy.hamming
     :returns: A numpy array of size (NUMFRAMES by nfilt) containing features. Each row holds 1 feature vector.
     """
-    feat,energy = fbank(signal,samplerate,winlen,winstep,nfilt,nfft,lowfreq,highfreq,preemph)
+    feat,energy = fbank(signal,samplerate,winlen,winstep,nfilt,nfft,lowfreq,highfreq,preemph,winfunc)
     return numpy.log(feat)
 
 def ssc(signal,samplerate=16000,winlen=0.025,winstep=0.01,
