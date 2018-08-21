@@ -11,4 +11,8 @@ setup(name='python_speech_features',
       license='MIT',
       url='https://github.com/jameslyons/python_speech_features',
       packages=['python_speech_features'],
+      install_requires=[
+        'numpy',
+        'scipy',
+      ]
     )
