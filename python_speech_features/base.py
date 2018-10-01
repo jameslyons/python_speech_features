@@ -32,6 +32,28 @@ def mfcc(signal,samplerate=16000,winlen=0.025,winstep=0.01,numcep=13,
     if appendEnergy: feat[:,0] = numpy.log(energy) # replace first cepstral coefficient with log of frame energy
     return feat
 
+def powerspec(signal,samplerate=16000,winlen=0.025,winstep=0.01,
+          nfft=512, lowfreq=0,highfreq=None, preemph=0.97,
+          winfunc=lambda x:numpy.ones((x,))):
+    """Compute power spectorgram features from an audio signal.
+
+    :param signal: the audio signal from which to compute features. Should be an N*1 array
+    :param samplerate: the samplerate of the signal we are working with.
+    :param winlen: the length of the analysis window in seconds. Default is 0.025s (25 milliseconds)
+    :param winstep: the step between successive windows in seconds. Default is 0.01s (10 milliseconds)
+    :param nfft: the FFT size. Default is 512.
+    :param lowfreq: lowest band edge of mel filters. In Hz, default is 0.
+    :param highfreq: highest band edge of mel filters. In Hz, default is samplerate/2
+    :param preemph: apply preemphasis filter with preemph as coefficient. 0 is no filter. Default is 0.97.
+    :param winfunc: the analysis window to apply to each frame. By default no window is applied. You can use numpy window functions here e.g. winfunc=numpy.hamming
+    :returns:  first is a numpy array of size (NUMFRAMES by nfft) containing power spectrogram. 
+    """
+    highfreq= highfreq or samplerate/2
+    signal = sigproc.preemphasis(signal, preemph)
+    frames = sigproc.framesig(signal, winlen*samplerate, winstep*samplerate, winfunc)
+    pspec = sigproc.powspec(frames,nfft)
+    return pspec
+ 
 def fbank(signal,samplerate=16000,winlen=0.025,winstep=0.01,
           nfilt=26,nfft=512,lowfreq=0,highfreq=None,preemph=0.97,
           winfunc=lambda x:numpy.ones((x,))):
@@ -50,10 +72,7 @@ def fbank(signal,samplerate=16000,winlen=0.025,winstep=0.01,
     :returns: 2 values. The first is a numpy array of size (NUMFRAMES by nfilt) containing features. Each row holds 1 feature vector. The
         second return value is the energy in each frame (total energy, unwindowed)
     """
-    highfreq= highfreq or samplerate/2
-    signal = sigproc.preemphasis(signal,preemph)
-    frames = sigproc.framesig(signal, winlen*samplerate, winstep*samplerate, winfunc)
-    pspec = sigproc.powspec(frames,nfft)
+    pspec = powerspec(signal, samplerate, winlen, winstep, nfft, lowfreq, highfreq, preemph, winfunc) 
     energy = numpy.sum(pspec,1) # this stores the total energy in each frame
     energy = numpy.where(energy == 0,numpy.finfo(float).eps,energy) # if energy is zero, we get problems with log
 
@@ -81,6 +100,16 @@ def logfbank(signal,samplerate=16000,winlen=0.025,winstep=0.01,
     :returns: A numpy array of size (NUMFRAMES by nfilt) containing features. Each row holds 1 feature vector.
     """
     feat,energy = fbank(signal,samplerate,winlen,winstep,nfilt,nfft,lowfreq,highfreq,preemph,winfunc)
+    return numpy.log(feat)
+
+def logfbank_from_powspec(pspec, samplerate=16000, nfilt=26, nfft=512, lowfreq=0,highfreq=None):
+    energy = numpy.sum(pspec,1) # this stores the total energy in each frame
+    energy = numpy.where(energy == 0, numpy.finfo(float).eps, energy) # if energy is zero, we get problems with log
+
+    fb = get_filterbanks(nfilt,nfft,samplerate,lowfreq,highfreq)
+    feat = numpy.dot(pspec,fb.T) # compute the filterbank energies
+    feat = numpy.where(feat == 0, numpy.finfo(float).eps, feat) # if feat is zero, we get problems with log
+
     return numpy.log(feat)
 
 def ssc(signal,samplerate=16000,winlen=0.025,winstep=0.01,
