@@ -101,5 +101,5 @@ Reference
 =========
 sample english.wav obtained from::
 
-	wget http://voyager.jpl.nasa.gov/spacecraft/audio/english.au
+	wget https://voyager.jpl.nasa.gov/assets/audio/golden-record/english.au
 	sox english.au -e signed-integer english.wav
