@@ -8,6 +8,8 @@ If you are not sure what MFCCs are, and would like to know more have a look at t
 
 `Project Documentation <http://python-speech-features.readthedocs.org/en/latest/>`_
 
+To cite, please use: James Lyons et al. (2020, January 14). jameslyons/python_speech_features: release v0.6.1 (Version 0.6.1). Zenodo. http://doi.org/10.5281/zenodo.3607820
+
 Installation
 ============
 
