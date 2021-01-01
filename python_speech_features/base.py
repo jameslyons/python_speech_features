@@ -5,23 +5,6 @@ import numpy
 from python_speech_features import sigproc
 from scipy.fftpack import dct
 
-def calculate_nfft(samplerate, winlen):
-    """Calculates the FFT size as a power of two greater than or equal to
-    the number of samples in a single window length.
-    
-    Having an FFT less than the window length loses precision by dropping
-    many of the samples; a longer FFT than the window allows zero-padding
-    of the FFT buffer which is neutral in terms of frequency domain conversion.
-
-    :param samplerate: The sample rate of the signal we are working with, in Hz.
-    :param winlen: The length of the analysis window in seconds.
-    """
-    window_length_samples = winlen * samplerate
-    nfft = 1
-    while nfft < window_length_samples:
-        nfft *= 2
-    return nfft
-
 def mfcc(signal,samplerate=16000,winlen=0.025,winstep=0.01,numcep=13,
          nfilt=26,nfft=None,lowfreq=0,highfreq=None,preemph=0.97,ceplifter=22,appendEnergy=True,
          winfunc=lambda x:numpy.ones((x,))):
@@ -51,7 +34,7 @@ def mfcc(signal,samplerate=16000,winlen=0.025,winstep=0.01,numcep=13,
     return feat
 
 def fbank(signal,samplerate=16000,winlen=0.025,winstep=0.01,
-          nfilt=26,nfft=512,lowfreq=0,highfreq=None,preemph=0.97,
+          nfilt=26,nfft=None,lowfreq=0,highfreq=None,preemph=0.97,
           winfunc=lambda x:numpy.ones((x,))):
     """Compute Mel-filterbank energy features from an audio signal.
 
@@ -60,7 +43,7 @@ def fbank(signal,samplerate=16000,winlen=0.025,winstep=0.01,
     :param winlen: the length of the analysis window in seconds. Default is 0.025s (25 milliseconds)
     :param winstep: the step between successive windows in seconds. Default is 0.01s (10 milliseconds)
     :param nfilt: the number of filters in the filterbank, default 26.
-    :param nfft: the FFT size. Default is 512.
+    :param nfft: the FFT size. Default is None, which uses the calculate_nfft function to choose the smallest size that does not drop sample data.
     :param lowfreq: lowest band edge of mel filters. In Hz, default is 0.
     :param highfreq: highest band edge of mel filters. In Hz, default is samplerate/2
     :param preemph: apply preemphasis filter with preemph as coefficient. 0 is no filter. Default is 0.97.
@@ -68,6 +51,7 @@ def fbank(signal,samplerate=16000,winlen=0.025,winstep=0.01,
     :returns: 2 values. The first is a numpy array of size (NUMFRAMES by nfilt) containing features. Each row holds 1 feature vector. The
         second return value is the energy in each frame (total energy, unwindowed)
     """
+    nfft = nfft or calculate_nfft(samplerate, winlen)
     highfreq= highfreq or samplerate/2
     signal = sigproc.preemphasis(signal,preemph)
     frames = sigproc.framesig(signal, winlen*samplerate, winstep*samplerate, winfunc)
@@ -82,7 +66,7 @@ def fbank(signal,samplerate=16000,winlen=0.025,winstep=0.01,
     return feat,energy
 
 def logfbank(signal,samplerate=16000,winlen=0.025,winstep=0.01,
-             nfilt=26,nfft=512,lowfreq=0,highfreq=None,preemph=0.97,
+             nfilt=26,nfft=None,lowfreq=0,highfreq=None,preemph=0.97,
              winfunc=lambda x:numpy.ones((x,))):
     """Compute log Mel-filterbank energy features from an audio signal.
 
@@ -91,18 +75,19 @@ def logfbank(signal,samplerate=16000,winlen=0.025,winstep=0.01,
     :param winlen: the length of the analysis window in seconds. Default is 0.025s (25 milliseconds)
     :param winstep: the step between successive windows in seconds. Default is 0.01s (10 milliseconds)
     :param nfilt: the number of filters in the filterbank, default 26.
-    :param nfft: the FFT size. Default is 512.
+    :param nfft: the FFT size. Default is None, which uses the calculate_nfft function to choose the smallest size that does not drop sample data.
     :param lowfreq: lowest band edge of mel filters. In Hz, default is 0.
     :param highfreq: highest band edge of mel filters. In Hz, default is samplerate/2
     :param preemph: apply preemphasis filter with preemph as coefficient. 0 is no filter. Default is 0.97.
     :param winfunc: the analysis window to apply to each frame. By default no window is applied. You can use numpy window functions here e.g. winfunc=numpy.hamming
     :returns: A numpy array of size (NUMFRAMES by nfilt) containing features. Each row holds 1 feature vector.
     """
+    nfft = nfft or calculate_nfft(samplerate, winlen)
     feat,energy = fbank(signal,samplerate,winlen,winstep,nfilt,nfft,lowfreq,highfreq,preemph,winfunc)
     return numpy.log(feat)
 
 def ssc(signal,samplerate=16000,winlen=0.025,winstep=0.01,
-        nfilt=26,nfft=512,lowfreq=0,highfreq=None,preemph=0.97,
+        nfilt=26,nfft=None,lowfreq=0,highfreq=None,preemph=0.97,
         winfunc=lambda x:numpy.ones((x,))):
     """Compute Spectral Subband Centroid features from an audio signal.
 
@@ -111,13 +96,14 @@ def ssc(signal,samplerate=16000,winlen=0.025,winstep=0.01,
     :param winlen: the length of the analysis window in seconds. Default is 0.025s (25 milliseconds)
     :param winstep: the step between successive windows in seconds. Default is 0.01s (10 milliseconds)
     :param nfilt: the number of filters in the filterbank, default 26.
-    :param nfft: the FFT size. Default is 512.
+    :param nfft: the FFT size. Default is None, which uses the calculate_nfft function to choose the smallest size that does not drop sample data.
     :param lowfreq: lowest band edge of mel filters. In Hz, default is 0.
     :param highfreq: highest band edge of mel filters. In Hz, default is samplerate/2
     :param preemph: apply preemphasis filter with preemph as coefficient. 0 is no filter. Default is 0.97.
     :param winfunc: the analysis window to apply to each frame. By default no window is applied. You can use numpy window functions here e.g. winfunc=numpy.hamming
     :returns: A numpy array of size (NUMFRAMES by nfilt) containing features. Each row holds 1 feature vector.
     """
+    nfft = nfft or calculate_nfft(samplerate, winlen)
     highfreq= highfreq or samplerate/2
     signal = sigproc.preemphasis(signal,preemph)
     frames = sigproc.framesig(signal, winlen*samplerate, winstep*samplerate, winfunc)
@@ -146,12 +132,12 @@ def mel2hz(mel):
     """
     return 700*(10**(mel/2595.0)-1)
 
-def get_filterbanks(nfilt=20,nfft=512,samplerate=16000,lowfreq=0,highfreq=None):
+def get_filterbanks(nfilt=20,nfft=None,samplerate=16000,lowfreq=0,highfreq=None):
     """Compute a Mel-filterbank. The filters are stored in the rows, the columns correspond
     to fft bins. The filters are returned as an array of size nfilt * (nfft/2 + 1)
 
     :param nfilt: the number of filters in the filterbank, default 20.
-    :param nfft: the FFT size. Default is 512.
+    :param nfft: the FFT size. Default is None, which uses the calculate_nfft function to choose the smallest size that does not drop sample data.
     :param samplerate: the sample rate of the signal we are working with, in Hz. Affects mel spacing.
     :param lowfreq: lowest band edge of mel filters, default 0 Hz
     :param highfreq: highest band edge of mel filters, default samplerate/2
@@ -208,3 +194,20 @@ def delta(feat, N):
     for t in range(NUMFRAMES):
         delta_feat[t] = numpy.dot(numpy.arange(-N, N+1), padded[t : t+2*N+1]) / denominator   # [t : t+2*N+1] == [(N+t)-N : (N+t)+N+1]
     return delta_feat
+
+def calculate_nfft(samplerate, winlen):
+    """Calculates the FFT size as a power of two greater than or equal to
+    the number of samples in a single window length.
+    
+    Having an FFT less than the window length loses precision by dropping
+    many of the samples; a longer FFT than the window allows zero-padding
+    of the FFT buffer which is neutral in terms of frequency domain conversion.
+
+    :param samplerate: The sample rate of the signal we are working with, in Hz.
+    :param winlen: The length of the analysis window in seconds.
+    """
+    window_length_samples = winlen * samplerate
+    nfft = 1
+    while nfft < window_length_samples:
+        nfft *= 2
+    return nfft
