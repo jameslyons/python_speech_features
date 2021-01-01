@@ -2,6 +2,8 @@ from python_speech_features import sigproc
 import unittest
 import numpy as np
 import time
+import scipy.io.wavfile as wav
+from python_speech_features import mfcc
 
 
 class test_case(unittest.TestCase):
@@ -29,3 +31,8 @@ class test_case(unittest.TestCase):
                                [6, 7, 8, 9]]
                               )
         y = np.testing.assert_array_equal(y, y_expected)
+
+    def test_mfcc(self):
+        (rate, sig) = wav.read("../english.wav")
+        mfcc_feat = mfcc(sig, rate)
+        self.assertIsNotNone(mfcc_feat)
