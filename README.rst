@@ -20,7 +20,7 @@ To install from pypi::
 	
 From this repository::
 
-	git clone https://github.com/jameslyons/python_speech_features
+	git clone https://github.com/dankal444/python_speech_features
 	python setup.py develop
 
 
